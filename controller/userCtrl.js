@@ -1,11 +1,11 @@
 const boom = require('boom');
-const UserModel = require("../model/userModel");
+const db = require("../model");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 //get all user
 exports.getAllUser = async (req, reply) => {
     try {
-        let users = await UserModel.findAll();
+        let users = await db.userModel.findAll();
         return users;
     } catch (err) {
         throw boom.boomify(err)
@@ -15,7 +15,7 @@ exports.getAllUser = async (req, reply) => {
 exports.getSingleUser = async (req, reply) => {
     try {
         const id = req.params.id
-        let user = await UserModel.findOne({ where: { id: id } });
+        let user = await db.userModel.findOne({ where: { id: id } });
         return user;
     } catch (err) {
         throw boom.boomify(err)
@@ -24,14 +24,14 @@ exports.getSingleUser = async (req, reply) => {
 //add new user
 exports.addNewUser = async (req, reply) => {
     try {
-        const emailExtis = await UserModel.findOne({ where: { email: req.body.email } });
+        const emailExtis = await db.userModel.findOne({ where: { email: req.body.email } });
         if (emailExtis) {
             return ({
                 status: 204,
                 message: "email id alredy exits"
             })
         }
-        const userExtis = await UserModel.findOne({ where: { userName: req.body.userName } })
+        const userExtis = await db.userModel.findOne({ where: { userName: req.body.userName } })
         if (userExtis) {
             return ({
                 status: 205,
@@ -39,7 +39,7 @@ exports.addNewUser = async (req, reply) => {
             })
         }
         else {
-            const role = await UserModel.create(req.body);
+            const role = await db.userModel.create(req.body);
             return ({
                 status: 200,
                 message: 'User Created Sucssfully'
@@ -57,7 +57,7 @@ exports.updateUser = async (req, reply) => {
         const id = req.params.id;
         if (req.file) {
             console.log(req.file)
-            let userresults = await UserModel.update({
+            let userresults = await db.userModel.update({
                 profileImage: 'images/' + req.file.filename
             }, { where: { id: id } });
             return ({
@@ -66,7 +66,7 @@ exports.updateUser = async (req, reply) => {
             });
         }
         else {
-            let userresults = await UserModel.update(req.body, { where: { id: id } });
+            let userresults = await db.userModel.update(req.body, { where: { id: id } });
             return ({
                 status: 200,
                 message: " profile update successfully"
@@ -81,7 +81,7 @@ exports.updateUser = async (req, reply) => {
 exports.deleteUser = async (req, reply) => {
     try {
         const id = req.params.id
-        let userResults = await UserModel.destroy({ where: { id: id } });
+        let userResults = await db.userModel.destroy({ where: { id: id } });
         return { Message: "Post Deleted" }
     } catch (err) {
         throw boom.boomify(err)
@@ -90,7 +90,7 @@ exports.deleteUser = async (req, reply) => {
 //user login
 exports.loginUser = async (req, reply) => {
     try {
-        let userExits = await UserModel.findOne({
+        let userExits = await db.userModel.findOne({
             userName: req.body.userName,
             status: 1,
         });

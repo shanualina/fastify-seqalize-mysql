@@ -1,10 +1,10 @@
 const boom = require('boom');
-const roleModel = require("../model/role.model");
+const db = require("../model");
 
 //get all user
 exports.getAllRoles = async (req, reply) => {
     try {
-        let roles = await roleModel.findAll();
+        let roles = await db.roleModel.findAll({});
         return roles;
     } catch (err) {
         throw boom.boomify(err)
@@ -14,7 +14,7 @@ exports.getAllRoles = async (req, reply) => {
 exports.getSingleRole = async (req, reply) => {
     try {
         const id = req.params.id
-        let role = await roleModel.findOne({ where: { id: id } });
+        let role = await db.roleModel.findOne({ where: { id: id } });
         return role;
     } catch (err) {
         throw boom.boomify(err)
@@ -23,7 +23,7 @@ exports.getSingleRole = async (req, reply) => {
 //add new user
 exports.addNewRole = async (req, reply) => {
     try {
-        const roleExtis = await roleModel.findOne({ where: { name: req.body.name } })
+        const roleExtis = await db.roleModel.findOne({ where: { name: req.body.name } })
         if (roleExtis) {
             return ({
                 status: 204,
@@ -31,7 +31,7 @@ exports.addNewRole = async (req, reply) => {
             })
         }
         else {
-            const role = await roleModel.create(req.body);
+            const role = await db.roleModel.create(req.body);
             return ({
                 status: 200,
                 message: 'role Created Sucssfully'
@@ -45,7 +45,7 @@ exports.addNewRole = async (req, reply) => {
 exports.updateRole = async (req, reply) => {
     try {
         const id = req.params.id;
-        let roleResults = await roleModel.update(req.body, { where: { id: id } });
+        let roleResults = await db.roleModel.update(req.body, { where: { id: id } });
         return ({
             status: 200,
             message: " role update successfully"
@@ -58,7 +58,7 @@ exports.updateRole = async (req, reply) => {
 exports.deleteRole = async (req, reply) => {
     try {
         const id = req.params.id
-        let roleResults = await roleModel.destroy({ where: { id: id } });
+        let roleResults = await db.roleModel.destroy({ where: { id: id } });
         return { Message: "role Deleted" }
     } catch (err) {
         throw boom.boomify(err)
