@@ -71,7 +71,6 @@ const routes = [
         url: '/api/role/getById/:id',
         handler: roleController.getSingleRole
     }
-    
 
 ]
 module.exports = routes
